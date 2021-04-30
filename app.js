@@ -13,52 +13,47 @@ mainDiv.append(canvas);
 
 //VARIABLES
 
-// var arrayToBeSorted = bubbleSortAnArray(populateArrayWithHeightValues(makeArray()));
-var arrayToBeSorted = populateArrayWithHeightValues(makeArray());
-
 var i = 0;
 var j = 0;
+var l = 0;
+
+var setI = false;
+var setJ = false;
+var setL = false;
+
+var selection = 0;
+
+var scaler = 4;
+
+var globalSpeed = 50;
+
+var arrayToBeSorted = populateArrayWithHeightValues(makeArray());
+
+var switchSorting = 2;
+
+var current = 0;
+
+var setCurrent = false;
 
 loop();
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  for(var v = 0; v < 100; v++) {
-    var a = arrayToBeSorted[j];
-    var b = arrayToBeSorted[j + 1];
+  switch (switchSorting) {
+    case 0:
+      arrayToBeSorted = bubbleSortAnArray(arrayToBeSorted, globalSpeed);
+      break;
+    case 1:
+      arrayToBeSorted = selectionSortAnArray(arrayToBeSorted, globalSpeed);
+      break;
+    case 2:
+      arrayToBeSorted = insertionSortAnArray(arrayToBeSorted, globalSpeed);
+      break;
   
-    if(a > b) {
-      // [a, b] = [b, a];
-      arrayToBeSorted[j] = b;
-      arrayToBeSorted[j + 1] = a;
-    }
-  
-    if(i < arrayToBeSorted.length) {
-      j++;
-      if(j === arrayToBeSorted.length - i) {
-        i++
-        j = 0;
-      }
-    }
+    default:
+      break;
   }
-
-
-
-  for(var k = 0; k < arrayToBeSorted.length; k++) {
-
-    ctx.save();
-    ctx.translate(k, canvas.height);
-    ctx.beginPath()
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, -arrayToBeSorted[k])
-    ctx.strokeStyle = j === k ? 'red' : 'white';
-    ctx.stroke();
-    ctx.closePath();
-    ctx.restore();
-
-  }
-
 }
 
 function loop() {
@@ -69,7 +64,7 @@ function loop() {
 //FUNCTIONS
 
 function makeArray() {
-  var arr = new Array(canvas.width);
+  var arr = new Array(canvas.width / scaler);
   return arr;
 }
 
@@ -85,23 +80,126 @@ function populateArrayWithHeightValues(arrayToBePopulated = Array) {
 
 }
 
-function bubbleSortAnArray(arrayToSort) {
+function bubbleSortAnArray(arrayToSort, speed) {
 
   var arrayCopy = arrayToSort.slice();
-  
-  for(var i = 0; i < arrayCopy.length; i++) {
-    for(var j = 0; j < arrayCopy.length - i; j++) {
-      var a = arrayCopy[j];
-      var b = arrayCopy[j + 1];
 
-      if(a > b) {
-        // [a, b] = [b, a];
-        arrayCopy[j] = b;
-        arrayCopy[j + 1] = a;
+  for(var n = 0; n < speed; n++) {
+    var a = arrayCopy[j];
+    var b = arrayCopy[j + 1];
+  
+    if(a > b) {
+      arrayCopy[j] = b;
+      arrayCopy[j + 1] = a;
+    }
+  
+    if(i < arrayCopy.length) {
+      j++;
+      if(j === arrayCopy.length - i) {
+        i++
+        j = 0;
       }
     }
   }
 
-  return arrayCopy;
+  for(var k = 0; k < arrayCopy.length; k++) {
 
+    ctx.save();
+    ctx.translate(k * scaler, canvas.height);
+    ctx.beginPath()
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, -arrayCopy[k]);
+    ctx.lineWidth = scaler;
+    ctx.strokeStyle = j === k ? 'red' : 'white';
+    ctx.stroke();
+    ctx.closePath();
+    ctx.restore();
+  }
+
+  return arrayCopy;
+}
+
+function selectionSortAnArray(arrayToSort, speed) {
+  var arrayCopy = arrayToSort.slice();
+
+  for(var n = 0; n < speed; n++) {
+    if(i < arrayCopy.length) {
+
+      //selection needs to be set to zero before each sort maybe lol
+    
+      if(arrayCopy[j] < arrayCopy[selection]) {
+        selection = j;
+      }
+
+      if(j === arrayCopy.length) {
+    
+        var a = arrayCopy[i];
+        var b = arrayCopy[selection];
+      
+        arrayCopy[i] = b;
+        arrayCopy[selection] = a;
+        
+        i++;
+        j = i;
+        selection = i;
+
+      } else {
+        j++;
+      }
+    }
+  }
+
+  for(var k = 0; k < arrayCopy.length; k++) {
+
+    ctx.save();
+    ctx.translate(k * scaler, canvas.height);
+    ctx.beginPath()
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, -arrayCopy[k]);
+    ctx.lineWidth = scaler;
+    ctx.strokeStyle = selection === k ? 'red' : j === k ? 'blue' : i === k ? 'green' : 'white';
+    ctx.stroke();
+    ctx.closePath();
+    ctx.restore();
+  }
+
+  return arrayCopy;
+}
+
+function insertionSortAnArray(arrayToSort, speed) {
+  var arrayCopy = arrayToSort.slice();
+
+  for(var n = 0; n < speed; n++) {
+
+    if(setJ === false) {
+      current = arrayCopy[i];
+      j = i-1; 
+      setJ = true;
+    }
+
+    if((j > -1) && (current < arrayCopy[j])) {
+      arrayCopy[j+1] = arrayCopy[j];
+      j--;
+    } else {
+      arrayCopy[j+1] = current;
+      i++
+      setJ = false;
+      setCurrent = false;
+    }
+  }
+
+  for(var k = 0; k < arrayCopy.length; k++) {
+    ctx.save();
+    ctx.translate(k * scaler, canvas.height);
+    ctx.beginPath()
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, -arrayCopy[k]);
+    ctx.lineWidth = scaler;
+    ctx.strokeStyle = j === k ? 'red' : i+1 === k ? 'green' : 'white';
+    ctx.stroke();
+    ctx.closePath();
+    ctx.restore();
+  }
+
+  return arrayCopy;
 }
