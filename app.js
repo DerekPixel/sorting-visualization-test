@@ -25,11 +25,13 @@ var selection = 0;
 
 var scaler = 4;
 
-var globalSpeed = 50;
+var globalSpeed = 1000;
 
 var arrayToBeSorted = populateArrayWithHeightValues(makeArray());
 
-var switchSorting = 2;
+quickSort(arrayToBeSorted, 0, arrayToBeSorted.length-1);
+
+var switchSorting = 3;
 
 var current = 0;
 
@@ -53,6 +55,20 @@ function draw() {
   
     default:
       break;
+  }
+
+  for(var k = 0; k < arrayToBeSorted.length; k++) {
+
+    ctx.save();
+    ctx.translate(k * scaler, canvas.height);
+    ctx.beginPath()
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, -arrayToBeSorted[k]);
+    ctx.lineWidth = scaler;
+    ctx.strokeStyle = j === k ? 'red' : 'white';
+    ctx.stroke();
+    ctx.closePath();
+    ctx.restore();
   }
 }
 
@@ -202,4 +218,43 @@ function insertionSortAnArray(arrayToSort, speed) {
   }
 
   return arrayCopy;
+}
+
+async function quickSort(arr, start, end) {
+  if (start >= end) {
+    return;
+  }
+  let index = await partition(arr, start, end);
+
+  await Promise.all([
+    quickSort(arr, start, index - 1),
+    quickSort(arr, index + 1, end)
+  ]);
+}
+
+async function partition(arr, start, end) {
+
+  let pivotValue = arr[end];
+  let pivotIndex = start;
+
+  for (let i = start; i < end; i++) {
+    if (arr[i] < pivotValue) {
+      await swap(arr, i, pivotIndex);
+      pivotIndex++;
+    }
+  }
+  await swap(arr, pivotIndex, end);
+
+  return pivotIndex;
+}
+
+async function swap(arr, a, b) {
+  await sleep(50);
+  let temp = arr[a];
+  arr[a] = arr[b];
+  arr[b] = temp;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
