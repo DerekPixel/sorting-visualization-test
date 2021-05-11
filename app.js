@@ -23,15 +23,15 @@ var setL = false;
 
 var selection = 0;
 
-var scaler = 4;
+var scaler = 1;
 
-var globalSpeed = 1000;
+var globalSpeed = 1;
 
 var arrayToBeSorted = populateArrayWithHeightValues(makeArray());
 
-quickSort(arrayToBeSorted, 0, arrayToBeSorted.length-1);
+// quickSort(arrayToBeSorted, 0, arrayToBeSorted.length-1);
 
-var switchSorting = 3;
+var switchSorting = 2;
 
 var current = 0;
 
@@ -57,19 +57,19 @@ function draw() {
       break;
   }
 
-  for(var k = 0; k < arrayToBeSorted.length; k++) {
+  // for(var k = 0; k < arrayToBeSorted.length; k++) {
 
-    ctx.save();
-    ctx.translate(k * scaler, canvas.height);
-    ctx.beginPath()
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, -arrayToBeSorted[k]);
-    ctx.lineWidth = scaler;
-    ctx.strokeStyle = j === k ? 'red' : 'white';
-    ctx.stroke();
-    ctx.closePath();
-    ctx.restore();
-  }
+  //   ctx.save();
+  //   ctx.translate(k * scaler, canvas.height);
+  //   ctx.beginPath()
+  //   ctx.moveTo(0, 0);
+  //   ctx.lineTo(0, -arrayToBeSorted[k]);
+  //   ctx.lineWidth = scaler;
+  //   ctx.strokeStyle = j === k ? 'red' : 'white';
+  //   ctx.stroke();
+  //   ctx.closePath();
+  //   ctx.restore();
+  // }
 }
 
 function loop() {
